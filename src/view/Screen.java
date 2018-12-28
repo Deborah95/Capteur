@@ -1,24 +1,57 @@
 package view;
 
+import java.io.IOException;
+
+import com.rapplogic.xbee.api.XBee;
+import com.rapplogic.xbee.api.XBeeException;
+
+import javafx.event.EventHandler;
 import javafx.scene.Group;
-import javafx.scene.chart.*;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.input.MouseEvent;
+import model.Signal;
+import model.XbeeListener;
 
-public class Screen extends Chart{
+
+public class Screen{
+	Group group;
 	
-	public Screen() {
-		Axis<Number> AxeX = new NumberAxis(); 
-		Axis<Number> AxeY = new NumberAxis(); 
-		LineChart<Number, Number> linechart = new LineChart<Number, Number>(AxeX, AxeY);
-		Group groupe = new Group();
-		groupe.getChildren().add(linechart);
-		
-		
-		
+	public Screen(Group group) {
+		this.group = group;
 	}
+	
+	public Node createMainContent() throws XBeeException, IOException {
 
-	@Override
-	protected void layoutChartChildren(double arg0, double arg1, double arg2, double arg3) {
-		// TODO Auto-generated method stub
+		Button button_start = new Button("Start Acquisition");
+		Button button_stop = new Button("Stop Acquisition");
+
+		this.group.getChildren().addAll(button_start, button_stop);
 		
+		XBee xbee = new XBee();
+		Signal signal = new Signal();
+		XbeeListener data = new XbeeListener(signal, xbee);
+
+		button_start.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			public void handle(MouseEvent e) {
+				System.out.println("Start !");
+				try {
+					data.start_acquisition_xbee();
+				} catch (XBeeException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+		
+		button_stop.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			public void handle(MouseEvent e) {
+				System.out.println("Stop !");
+				data.stop_acquisition_xbee();
+			}
+		});
+
+		return group;
 	}
+	
 }
