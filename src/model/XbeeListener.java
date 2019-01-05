@@ -4,7 +4,7 @@ import com.rapplogic.xbee.api.*;
 import com.rapplogic.xbee.api.wpan.*;
 
 public class XbeeListener {
-	Signal signal;
+	public Signal signal;
 	XBee xbee;
 	PacketListener packetListener;
 	
