@@ -4,57 +4,59 @@ import java.util.Vector;
 
 public class SignalTools {
 	Signal signal;
-	
+
 	// Constructeurs : Initialise un signal fourni en argument
 	public SignalTools(Signal signal) {
 		this.signal = signal;
 	}
-	
+
 	public SignalTools(Vector<Double> signal) {
 		this.signal.echantillons = signal;
 	}
-	
+
 	// Methodes : moyenne, variance, maximum, delta
 	public double moyenne() {
 		int i;
 		int taille = this.signal.get_size();
 		double somme = 0;
-		for(i=0;i<taille;i++) {
+		for (i = 0; i < taille; i++) {
 			somme += this.signal.get_echantillon(i);
 		}
-		return somme/(double)taille;
+		return somme / (double) taille;
 	}
-	
+
 	public double variance() {
 		int i;
 		int taille = this.signal.get_size();
 		double moyenne = this.moyenne();
 		double somme2 = 0;
-		for(i=0;i<taille;i++) {
-			somme2 += Math.pow(this.signal.get_echantillon(i)-moyenne, 2);
+		for (i = 0; i < taille; i++) {
+			somme2 += Math.pow(this.signal.get_echantillon(i) - moyenne, 2);
 		}
-		return somme2/(double)taille;		
+		return somme2 / (double) taille;
 	}
-	
+
 	public double maximum() {
 		int i;
 		int taille = this.signal.get_size();
-		double max = this.signal.get_echantillon(0);
-		for(i=1;i<taille;i++) {
-			if(this.signal.get_echantillon(i)>max) {
+		double max = Signal._DEFAULT_PRESSURE;
+		for (i = 0; i < taille; i++) {
+			if (this.signal.get_echantillon(i) > max) {
 				max = this.signal.get_echantillon(i);
 			}
 		}
 		return max;
 	}
-	
+
 	public Signal delta() {
 		int i;
 		int taille = this.signal.get_size();
 		Signal dsignal = new Signal();
-		dsignal.set_echantillon(0, this.signal.get_echantillon(0));
-		for(i=1;i<taille;i++) {
-			dsignal.set_echantillon(i,this.signal.get_echantillon(i)-this.signal.get_echantillon(i-1));
+		if (taille > 0) {
+			dsignal.add_echantillon_end(this.signal.get_echantillon(0));
+			for (i = 1; i < taille; i++) {
+				dsignal.add_echantillon_end(this.signal.get_echantillon(i) - this.signal.get_echantillon(i - 1));
+			}
 		}
 		return dsignal;
 	}

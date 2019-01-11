@@ -7,6 +7,7 @@ public class Signal {
 	double frequence;
 	double nb_bits;
 	String unite_phys;
+	public static final double _DEFAULT_PRESSURE = -32.32;
 	
 	public Signal() {
 		this.echantillons = new Vector<Double>();
