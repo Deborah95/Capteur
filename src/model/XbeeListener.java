@@ -11,7 +11,7 @@ public class XbeeListener {
 	public XbeeListener(Signal signal, XBee xbee) throws XBeeException {
 		this.signal = signal;
 		this.xbee = xbee;
-		this.xbee.open("COM7", 9600);
+		this.xbee.open("COM10", 9600);
 	}
 
 	public void start_acquisition_xbee() throws XBeeException {
@@ -29,10 +29,8 @@ public class XbeeListener {
 
 						signal.add_echantillon_end(pression);
 
-						// System.out.println("Pression : " + pression + "mmHg");
-						// System.out.println(signal.get_size());
-						// System.out.println("Signal : " +
-						// signal.get_echantillon(signal.echantillons.size()));
+						//System.out.println(pression);
+
 					}
 				}
 

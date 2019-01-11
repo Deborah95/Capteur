@@ -109,25 +109,35 @@ public class Screen {
 				SignalTools signalT = new SignalTools(data.signal);
 				dpression = signalT.delta();
 				SignalTools dpressionT = new SignalTools(dpression);
-				double pression_moy = dpressionT.maximum();
-				double pression_syst = 0.55 * pression_moy;
-				double pression_diast = 0.85 * pression_moy;
+				int pos_max = 0;
+				double max_dpression = dpressionT.maximum(pos_max);
+				double pression_moy = data.signal.get_echantillon(pos_max);
+				int i = pos_max;
+				while (dpression.get_echantillon(i) > 0.85 * max_dpression) {
+					i = i + 1;
+				}
+				double pression_syst = data.signal.get_echantillon(i);
+				int j = pos_max;
+				while (dpression.get_echantillon(j) > 0.55 * max_dpression) {
+					j = j - 1;
+				}
+				double pression_diast = data.signal.get_echantillon(j);
 
-				Text text4 = new Text("" + df.format(pression_moy));
+				Text text4 = new Text("" + Math.round(pression_moy));
 				text4.setTextAlignment(TextAlignment.JUSTIFY);
 				text4.setFont(Font.font("Times New Roman", FontWeight.BOLD, FontPosture.REGULAR, 30));
 				text4.setFill(Color.BLACK);
 				text4.setX(870);
 				text4.setY(55);
 
-				Text text5 = new Text("" + df.format(pression_syst));
+				Text text5 = new Text("" + Math.round(pression_syst));
 				text5.setTextAlignment(TextAlignment.JUSTIFY);
 				text5.setFont(Font.font("Times New Roman", FontWeight.BOLD, FontPosture.REGULAR, 30));
 				text5.setFill(Color.BLACK);
 				text5.setX(880);
 				text5.setY(105);
 
-				Text text6 = new Text("" + df.format(pression_diast));
+				Text text6 = new Text("" + Math.round(pression_diast));
 				text6.setTextAlignment(TextAlignment.JUSTIFY);
 				text6.setFont(Font.font("Times New Roman", FontWeight.BOLD, FontPosture.REGULAR, 30));
 				text6.setFill(Color.BLACK);
