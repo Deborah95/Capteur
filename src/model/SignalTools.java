@@ -36,9 +36,24 @@ public class SignalTools {
 		return somme2 / (double) taille;
 	}
 
-	public double maximum(int pos_max) {
+	public double maximum() {
 		int i;
 		int taille = this.signal.get_size();
+		System.out.println("Taille :" + taille);
+		double max = Signal._DEFAULT_PRESSURE;
+		for (i = 0; i < taille; i++) {
+			if (this.signal.get_echantillon(i) > max) {
+				max = this.signal.get_echantillon(i);
+				System.out.println("Max :" + max);
+			}
+		}
+		return max;
+	}
+	
+	public int pos_maximum() {
+		int i;
+		int taille = this.signal.get_size();
+		int pos_max = 0;
 		double max = Signal._DEFAULT_PRESSURE;
 		for (i = 0; i < taille; i++) {
 			if (this.signal.get_echantillon(i) > max) {
@@ -46,22 +61,8 @@ public class SignalTools {
 				pos_max = i;
 			}
 		}
-		return max;
+		return pos_max;
 	}
-	
-//	public int pos_maximum() {
-//		int i;
-//		int taille = this.signal.get_size();
-//		int pos_max = 0;
-//		double max = Signal._DEFAULT_PRESSURE;
-//		for (i = 0; i < taille; i++) {
-//			if (this.signal.get_echantillon(i) > max) {
-//				max = this.signal.get_echantillon(i);
-//				pos_max = i;
-//			}
-//		}
-//		return pos_max;
-//	}
 
 	public Signal delta() {
 		int i;

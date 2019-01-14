@@ -11,7 +11,7 @@ public class XbeeListener {
 	public XbeeListener(Signal signal, XBee xbee) throws XBeeException {
 		this.signal = signal;
 		this.xbee = xbee;
-		this.xbee.open("COM10", 9600);
+		this.xbee.open("COM7", 9600);
 	}
 
 	public void start_acquisition_xbee() throws XBeeException {

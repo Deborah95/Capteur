@@ -6,6 +6,7 @@ import view.Screen;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.paint.Color;
 
 public class Main extends Application {
 	@Override
@@ -15,7 +16,7 @@ public class Main extends Application {
 			Group group = new Group();
 			Screen screen = new Screen(group);
 			root.setCenter(screen.createMainContent());
-			Scene scene = new Scene(root, 400, 400);
+			Scene scene = new Scene(root, 1500, 800, Color.LIGHTSKYBLUE);
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			primaryStage.setScene(scene);
 			primaryStage.setTitle("Acquisition de données");

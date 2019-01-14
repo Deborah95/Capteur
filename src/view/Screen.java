@@ -1,7 +1,7 @@
 package view;
 
 import java.io.IOException;
-import java.text.DecimalFormat;
+//import java.text.DecimalFormat;
 
 import com.rapplogic.xbee.api.XBee;
 import com.rapplogic.xbee.api.XBeeException;
@@ -21,6 +21,7 @@ import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+
 import model.Signal;
 import model.SignalTools;
 import model.XbeeListener;
@@ -39,7 +40,7 @@ public class Screen {
 
 		GridPane gridPane = new GridPane();
 
-		gridPane.setMinSize(400, 200);
+		gridPane.setMinSize(100, 200);
 		gridPane.setPadding(new Insets(10, 10, 10, 10));
 		gridPane.setVgap(5);
 		gridPane.setHgap(5);
@@ -49,6 +50,15 @@ public class Screen {
 		gridPane.add(button_stop, 0, 10);
 
 		this.group.getChildren().add(gridPane);
+		
+		Text title = new Text("Capteur de pression artérielle");
+		title.setTextAlignment(TextAlignment.JUSTIFY);
+		title.setFont(Font.font("Times New Roman", FontWeight.BOLD, FontPosture.REGULAR, 60));
+		title.setFill(Color.MIDNIGHTBLUE);
+		title.setX(150);
+		title.setY(-250);
+		
+		group.getChildren().add(title);
 
 		Text text1 = new Text("Pression moyenne :                mmHg");
 		text1.setTextAlignment(TextAlignment.JUSTIFY);
@@ -98,7 +108,7 @@ public class Screen {
 			}
 		});
 
-		DecimalFormat df = new DecimalFormat("##.##");
+		//DecimalFormat df = new DecimalFormat("##.##");
 
 		button_stop.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			public void handle(MouseEvent e) {
@@ -109,8 +119,8 @@ public class Screen {
 				SignalTools signalT = new SignalTools(data.signal);
 				dpression = signalT.delta();
 				SignalTools dpressionT = new SignalTools(dpression);
-				int pos_max = 0;
-				double max_dpression = dpressionT.maximum(pos_max);
+				int pos_max = dpressionT.pos_maximum();
+				double max_dpression = dpressionT.maximum();
 				double pression_moy = data.signal.get_echantillon(pos_max);
 				int i = pos_max;
 				while (dpression.get_echantillon(i) > 0.85 * max_dpression) {
