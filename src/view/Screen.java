@@ -50,14 +50,14 @@ public class Screen {
 		gridPane.add(button_stop, 0, 10);
 
 		this.group.getChildren().add(gridPane);
-		
+
 		Text title = new Text("Capteur de pression artérielle");
 		title.setTextAlignment(TextAlignment.JUSTIFY);
 		title.setFont(Font.font("Times New Roman", FontWeight.BOLD, FontPosture.REGULAR, 60));
 		title.setFill(Color.MIDNIGHTBLUE);
 		title.setX(150);
 		title.setY(-250);
-		
+
 		group.getChildren().add(title);
 
 		Text text1 = new Text("Pression moyenne :                mmHg");
@@ -108,7 +108,7 @@ public class Screen {
 			}
 		});
 
-		//DecimalFormat df = new DecimalFormat("##.##");
+		// DecimalFormat df = new DecimalFormat("##.##");
 
 		button_stop.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			public void handle(MouseEvent e) {
@@ -120,18 +120,25 @@ public class Screen {
 				dpression = signalT.delta();
 				SignalTools dpressionT = new SignalTools(dpression);
 				int pos_max = dpressionT.pos_maximum();
+				System.out.println("pos max :" + pos_max);
 				double max_dpression = dpressionT.maximum();
 				double pression_moy = data.signal.get_echantillon(pos_max);
-				int i = pos_max;
-				while (dpression.get_echantillon(i) > 0.85 * max_dpression) {
+				double tab[][] = dpressionT.find_peaks();
+				int i = 0;
+				while(tab[1][i] != pos_max) {
+					i++;
+				}
+				int j = i;
+				while (tab[0][i] > 0.85 * max_dpression) {
 					i = i + 1;
 				}
-				double pression_syst = data.signal.get_echantillon(i);
-				int j = pos_max;
-				while (dpression.get_echantillon(j) > 0.55 * max_dpression) {
+				double pression_diast = data.signal.get_echantillon((int)tab[1][i]);
+				System.out.println("i :" + tab[1][i]);
+				while (tab[0][j] > 0.55 * max_dpression) {
 					j = j - 1;
 				}
-				double pression_diast = data.signal.get_echantillon(j);
+				double pression_syst = data.signal.get_echantillon((int)tab[1][j]);
+				System.out.println("j :" + tab[1][j]);
 
 				Text text4 = new Text("" + Math.round(pression_moy));
 				text4.setTextAlignment(TextAlignment.JUSTIFY);
