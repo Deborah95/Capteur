@@ -39,7 +39,7 @@ public class SignalTools {
 	public double maximum() {
 		int i;
 		int taille = this.signal.get_size();
-		System.out.println("Taille :" + taille);
+//		System.out.println("Taille :" + taille);
 		double max = Signal._DEFAULT_PRESSURE;
 		for (i = 0; i < taille; i++) {
 			if (this.signal.get_echantillon(i) > max) {

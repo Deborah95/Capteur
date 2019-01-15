@@ -38,11 +38,11 @@ public class Screen {
 		Button button_start = new Button("Démarrer Acquisition");
 		Button button_stop = new Button("Arrêter Acquisition");
 		Button clear = new Button("Nouvelle acquisition");
-		
+
 		button_start.setMinWidth(150);
 		button_start.setMinHeight(50);
 		button_start.setFont(Font.font("Times New Roman", FontWeight.BOLD, FontPosture.REGULAR, 20));
-		
+
 		button_stop.setMinWidth(150);
 		button_stop.setMinHeight(50);
 		button_stop.setFont(Font.font("Times New Roman", FontWeight.BOLD, FontPosture.REGULAR, 20));
@@ -51,7 +51,7 @@ public class Screen {
 		clear.setMinHeight(50);
 		clear.setFont(Font.font("Times New Roman", FontWeight.BOLD, FontPosture.REGULAR, 20));
 
-		Text intro = new Text("Gonflez le brassard et démarrez l'acquisition");
+		Text intro = new Text("Gonflez le brassard et démarrez l'acquisition.");
 		intro.setTextAlignment(TextAlignment.JUSTIFY);
 		intro.setFont(Font.font("Times New Roman", FontWeight.BOLD, FontPosture.REGULAR, 40));
 		intro.setFill(Color.BLUEVIOLET);
@@ -79,7 +79,7 @@ public class Screen {
 		gridPane.add(button_stop, 0, 10);
 		gridPane.add(clear, 0, 30);
 
-		this.group.getChildren().add(gridPane);
+		group.getChildren().add(gridPane);
 
 		Text title = new Text("Capteur de pression artérielle");
 		title.setTextAlignment(TextAlignment.JUSTIFY);
@@ -111,16 +111,25 @@ public class Screen {
 		text3.setX(600);
 		text3.setY(150);
 
-		group.getChildren().addAll(text1, text2, text3);
+		Text text8 = new Text("Fréquence cardiaque :                battements/min");
+		text8.setTextAlignment(TextAlignment.JUSTIFY);
+		text8.setFont(Font.font("Times New Roman", FontWeight.BOLD, FontPosture.REGULAR, 30));
+		text8.setFill(Color.BLACK);
+		text8.setX(600);
+		text8.setY(200);
+
+		group.getChildren().addAll(text1, text2, text3, text8);
 
 		Rectangle rectangle1 = new Rectangle(860, 20, 100, 40);
 		Rectangle rectangle2 = new Rectangle(870, 70, 100, 40);
 		Rectangle rectangle3 = new Rectangle(880, 120, 100, 40);
+		Rectangle rectangle4 = new Rectangle(900, 170, 100, 40);
 		rectangle1.setFill(Color.WHITE);
 		rectangle2.setFill(Color.WHITE);
 		rectangle3.setFill(Color.WHITE);
+		rectangle4.setFill(Color.WHITE);
 
-		group.getChildren().addAll(rectangle1, rectangle2, rectangle3);
+		group.getChildren().addAll(rectangle1, rectangle2, rectangle3, rectangle4);
 
 		XBee xbee = new XBee();
 		Signal signal = new Signal();
@@ -152,6 +161,7 @@ public class Screen {
 		Text text4 = new Text();
 		Text text5 = new Text();
 		Text text6 = new Text();
+		Text text7 = new Text();
 		button_stop.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			public void handle(MouseEvent e) {
 				System.out.println("Stop !");
@@ -174,12 +184,23 @@ public class Screen {
 					i = i + 1;
 				}
 				double pression_diast = data.signal.get_echantillon((int) tab[1][i]);
-				System.out.println("i :" + tab[1][i]);
 				while (tab[0][j] > 0.55 * max_dpression) {
 					j = j - 1;
 				}
 				double pression_syst = data.signal.get_echantillon((int) tab[1][j]);
-				System.out.println("j :" + tab[1][j]);
+
+				double tab2[][] = signalT.find_peaks();
+				double max[] = new double[tab2.length];
+				int k = 0;
+				double somme = 0;
+				for (k = 0; k < tab2.length - 1; k++) {
+					max[k] = tab2[1][k + 1] - tab2[1][k];
+				}
+				for (k = 0; k < max.length - 1; k++) {
+					somme = somme + max[k];
+				}
+				double moy = somme / max.length;
+				double freq_cardiaque = 1 / (moy * Signal._TE);
 
 				text4.setText("" + Math.round(pression_moy));
 				text4.setTextAlignment(TextAlignment.JUSTIFY);
@@ -202,7 +223,14 @@ public class Screen {
 				text6.setX(890);
 				text6.setY(155);
 
-				group.getChildren().addAll(text4, text5, text6);
+				text7.setText("" + Math.round(freq_cardiaque));
+				text7.setTextAlignment(TextAlignment.JUSTIFY);
+				text7.setFont(Font.font("Times New Roman", FontWeight.BOLD, FontPosture.REGULAR, 30));
+				text7.setFill(Color.BLACK);
+				text7.setX(900);
+				text7.setY(205);
+
+				group.getChildren().addAll(text4, text5, text6, text7);
 
 				group.getChildren().remove(start_acq);
 
@@ -213,7 +241,7 @@ public class Screen {
 		clear.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			public void handle(MouseEvent e) {
 				System.out.println("Clear");
-				group.getChildren().removeAll(text4, text5, text6, fin_acq);
+				group.getChildren().removeAll(text4, text5, text6, text7, fin_acq);
 				data.signal.echantillons.clear();
 				group.getChildren().add(intro);
 			}
