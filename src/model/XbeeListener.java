@@ -29,7 +29,7 @@ public class XbeeListener {
 
 						signal.add_echantillon_end(pression);
 
-						//System.out.println(pression);
+						System.out.println(pression);
 
 					}
 				}

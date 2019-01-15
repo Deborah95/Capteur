@@ -3,7 +3,7 @@ package model;
 import java.util.Vector;
 
 public class Signal {
-	Vector<Double> echantillons;
+	public Vector<Double> echantillons;
 	double frequence;
 	double nb_bits;
 	String unite_phys;
