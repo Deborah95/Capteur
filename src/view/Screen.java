@@ -200,7 +200,7 @@ public class Screen {
 					somme = somme + max[k];
 				}
 				double moy = somme / max.length;
-				double freq_cardiaque = 1 / (moy * Signal._TE);
+				double freq_cardiaque = 60 / (moy * Signal._TE); // Fréquence cardiaque en battements/min
 
 				text4.setText("" + Math.round(pression_moy));
 				text4.setTextAlignment(TextAlignment.JUSTIFY);
