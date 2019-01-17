@@ -35,6 +35,7 @@ public class Screen {
 
 	public Node createMainContent() throws XBeeException, IOException {
 
+		// Création des boutons
 		Button button_start = new Button("Démarrer Acquisition");
 		Button button_stop = new Button("Arrêter Acquisition");
 		Button clear = new Button("Nouvelle acquisition");
@@ -51,6 +52,7 @@ public class Screen {
 		clear.setMinHeight(50);
 		clear.setFont(Font.font("Times New Roman", FontWeight.BOLD, FontPosture.REGULAR, 20));
 
+		// Création des messages de consignes à l'utilisateur
 		Text intro = new Text("Gonflez le brassard et démarrez l'acquisition.");
 		intro.setTextAlignment(TextAlignment.JUSTIFY);
 		intro.setFont(Font.font("Times New Roman", FontWeight.BOLD, FontPosture.REGULAR, 40));
@@ -90,6 +92,7 @@ public class Screen {
 
 		group.getChildren().add(title);
 
+		// Création des textes indiquant la valeur affichée
 		Text text1 = new Text("Pression moyenne :                mmHg");
 		text1.setTextAlignment(TextAlignment.JUSTIFY);
 		text1.setFont(Font.font("Times New Roman", FontWeight.BOLD, FontPosture.REGULAR, 30));
@@ -120,6 +123,8 @@ public class Screen {
 
 		group.getChildren().addAll(text1, text2, text3, text8);
 
+		// Rectangles blancs dans lesquels seront inscrites les valeurs de pression et
+		// de fréquence cardiaque
 		Rectangle rectangle1 = new Rectangle(860, 20, 100, 40);
 		Rectangle rectangle2 = new Rectangle(870, 70, 100, 40);
 		Rectangle rectangle3 = new Rectangle(880, 120, 100, 40);
@@ -131,11 +136,14 @@ public class Screen {
 
 		group.getChildren().addAll(rectangle1, rectangle2, rectangle3, rectangle4);
 
+		// Initialisation de l'écoute du XBee
 		XBee xbee = new XBee();
 		Signal signal = new Signal();
 		XbeeListener data = new XbeeListener(signal, xbee);
 
-		Text start_acq = new Text("Acquisition en cours... Arrêtez l'acquisition quand le brassard est dégonflé.");
+		// Démarrage de l'acquisition lorsqu'on appuie sur le bouton "Démarrer
+		// acquisition"
+		Text start_acq = new Text("Acquisition en cours... Arrêtez l'acquisition lorsque le brassard est dégonflé.");
 		button_start.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			public void handle(MouseEvent e) {
 				System.out.println("Start !");
@@ -162,6 +170,10 @@ public class Screen {
 		Text text5 = new Text();
 		Text text6 = new Text();
 		Text text7 = new Text();
+
+		// Fin de l'acquisition lorsqu'on appuie sur le bouton "Arrêter acquisition" :
+		// traitement des données (démodulation puis calcul des valeurs de pression et
+		// de fréquence cardiaque)
 		button_stop.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			public void handle(MouseEvent e) {
 				System.out.println("Stop !");
@@ -169,11 +181,18 @@ public class Screen {
 
 				Signal dpression = new Signal();
 				SignalTools signalT = new SignalTools(data.signal);
-				dpression = signalT.delta();
+				dpression = signalT.delta(); // Démodulation du signal de pression
 				SignalTools dpressionT = new SignalTools(dpression);
+
+				// Calcul du maximum de démodulation et de sa position pour déterminer la
+				// pression moyenne
 				int pos_max = dpressionT.pos_maximum();
 				double max_dpression = dpressionT.maximum();
+				System.out.println("max :" + max_dpression);
 				double pression_moy = data.signal.get_echantillon(pos_max);
+
+				// Détection des pics du signal de démodulation pour calculer les pression
+				// systolique et diastolique
 				double tab[][] = dpressionT.find_peaks();
 				int i = 0;
 				while (tab[1][i] != pos_max) {
@@ -184,11 +203,13 @@ public class Screen {
 					i = i + 1;
 				}
 				double pression_diast = data.signal.get_echantillon((int) tab[1][i]);
-				while (tab[0][j] > 0.55 * max_dpression) {
+				while (tab[0][j] > 0.55 * max_dpression & j >= 0) {
 					j = j - 1;
 				}
 				double pression_syst = data.signal.get_echantillon((int) tab[1][j]);
 
+				// Détection des pics du signal de pression pour déterminer la fréquence
+				// cardiaque
 				double tab2[][] = signalT.find_peaks();
 				double max[] = new double[tab2.length];
 				int k = 0;
@@ -202,6 +223,7 @@ public class Screen {
 				double moy = somme / max.length;
 				double freq_cardiaque = 60 / (moy * Signal._TE); // Fréquence cardiaque en battements/min
 
+				// Affichage des valeurs obtenues
 				text4.setText("" + Math.round(pression_moy));
 				text4.setTextAlignment(TextAlignment.JUSTIFY);
 				text4.setFont(Font.font("Times New Roman", FontWeight.BOLD, FontPosture.REGULAR, 30));
@@ -238,6 +260,8 @@ public class Screen {
 			}
 		});
 
+		// Effacement de toutes les données (affichées ou non) pour pouvoir démarrer une
+		// nouvelle acquisition
 		clear.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			public void handle(MouseEvent e) {
 				System.out.println("Clear");

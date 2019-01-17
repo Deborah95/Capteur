@@ -14,7 +14,8 @@ public class SignalTools {
 		this.signal.echantillons = signal;
 	}
 
-	// Methodes : moyenne, variance, maximum, delta
+	// Methodes : moyenne, variance, maximum, démodulation(delta), détection des
+	// pics d'un signal (find_peaks)
 	public double moyenne() {
 		int i;
 		int taille = this.signal.get_size();
@@ -44,7 +45,7 @@ public class SignalTools {
 		for (i = 0; i < taille; i++) {
 			if (this.signal.get_echantillon(i) > max) {
 				max = this.signal.get_echantillon(i);
-				//System.out.println("Max :" + max);
+				// System.out.println("Max :" + max);
 			}
 		}
 		return max;
@@ -69,10 +70,12 @@ public class SignalTools {
 		int taille = this.signal.get_size();
 		Signal dsignal = new Signal();
 		if (taille > 0) {
-			// dsignal.add_echantillon_end(this.signal.get_echantillon(0));
-			for (i = 1; i < taille; i++) {
-				dsignal.add_echantillon_end(this.signal.get_echantillon(i) - this.signal.get_echantillon(i - 1));
-				//System.out.println(dsignal.get_echantillon(i - 1));
+			double dernier = this.signal.get_echantillon(taille - 1);
+			double premier = this.signal.get_echantillon(0);
+			double pente = (dernier - premier) / taille;
+			for (i = 0; i < taille; i++) {
+				dsignal.add_echantillon_end((this.signal.get_echantillon(i) + pente * (taille - i)));
+				System.out.println(dsignal.get_echantillon(i));
 			}
 		}
 		return dsignal;
@@ -83,7 +86,7 @@ public class SignalTools {
 		double tab[][] = new double[2][taille];
 		int i = 1;
 		int j = 0;
-		for (i = 1; i < taille-1; i++) {
+		for (i = 1; i < taille - 1; i++) {
 			if (this.signal.get_echantillon(i) > this.signal.get_echantillon(i - 1)
 					&& this.signal.get_echantillon(i) > this.signal.get_echantillon(i + 1)) {
 				tab[0][j] = this.signal.get_echantillon(i);
